@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Add Baby Names</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to CSS file -->
+</head>
+<body>
+    <h2>Admin Panel - Add Baby Names</h2>
+    <div class="form-container">
+        <input type="text" id="name-input" placeholder="Enter baby name">
+        <button id="add-name-btn">Add Name</button>
+    </div>
+
+    <h3>Names Added</h3>
+    <ul id="name-list"></ul>
+
+    <script src="script.js"></script> <!-- Link to JavaScript file -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadNames(); // Load existing names on page load
+        });
+
+        // Add new baby name when button is clicked
+        document.getElementById('add-name-btn').addEventListener('click', function () {
+            const nameInput = document.getElementById('name-input').value;
+            if (nameInput) {
+                addName(nameInput); // Add the baby name to localStorage
+                document.getElementById('name-input').value = ''; // Clear the input field
+            }
+        });
+    </script>
+</body>
+</html>

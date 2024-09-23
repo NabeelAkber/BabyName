@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote for Baby Names</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to CSS file -->
+</head>
+<body>
+    <h2>Login to Vote for Baby Names</h2>
+    <div class="form-container">
+        <input type="text" id="participant-name" placeholder="Enter your name">
+        <button id="login-btn">Login</button>
+    </div>
+
+    <div id="voting-section" style="display: none;">
+        <h3>Select a Baby Name to Vote</h3>
+        <ul id="vote-list"></ul>
+        <p id="error-message" style="color: red;"></p>
+    </div>
+
+    <h3>Results</h3>
+    <ul id="vote-results"></ul>
+
+    <script src="script.js"></script> <!-- Link to JavaScript file -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            loadNamesForVoting(); // Load names for voting on page load
+            displayResults(); // Show vote results
+        });
+
+        // Participant login
+        document.getElementById('login-btn').addEventListener('click', function () {
+            const participantName = document.getElementById('participant-name').value;
+            if (participantName) {
+                login(participantName); // Log the participant in
+            }
+        });
+    </script>
+</body>
+</html>

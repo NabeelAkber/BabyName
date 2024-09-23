@@ -1,0 +1,258 @@
+/* style.css */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+h2, h3 {
+    margin-top: 20px;
+    color: #fff;
+    font-size: 2rem;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+input, button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    margin-right: 10px;
+    outline: none;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+input {
+    width: 250px;
+    border: 2px solid #fff;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+input:focus {
+    border-color: #ff9a9e;
+    background-color: #fff;
+}
+
+button {
+    background-color: #ff9a9e;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+button:hover {
+    background-color: #fecfef;
+    transform: scale(1.05);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+li {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 10px auto;
+    padding: 10px;
+    width: 300px;
+    border-radius: 15px;
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+}
+
+.vote-btn {
+    margin-left: 15px;
+    padding: 7px 15px;
+    background-color: #9c27b0;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.vote-btn:hover {
+    background-color: #7b1fa2;
+}
+
+#voting-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+#error-message {
+    color: #e53935;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#vote-results {
+    margin-top: 20px;
+    color: #fff;
+    font-weight: bold;
+}
+
+li.voted {
+    background-color: #e1bee7;
+}
+
+@media (max-width: 768px) {
+    ul li {
+        width: 90%;
+    }
+
+    input {
+        width: 200px;
+    }
+}
+Explanation of Styling Changes:
+Colors: We use a gradient background (linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)) for a soft, modern feel.
+Typography: The Poppins font gives the text a clean, readable look, and we’ve adjusted font sizes to make headings stand out.
+Buttons: Rounded, shadowed buttons with color transitions give a modern look and feel, while hover effects enhance interactivity.
+List Items: Names and vote results are displayed in styled, rounded boxes with shadows to visually separate the items.
+Error Messages: Red color and bold text ensure the user notices important feedback like error messages.
+Responsive: The design scales down for mobile devices using media queries.
+Updated JavaScript with User Feedback (script.js)
+We’ll add alerts, tooltips, and confirmations to make the interactions more dynamic and user-friendly.
+
+javascript
+Copy code
+// script.js
+
+// Load baby names from localStorage or initialize an empty array
+function loadNames() {
+    const babyNames = JSON.parse(localStorage.getItem('babyNames')) || [];
+    const nameList = document.getElementById('name-list');
+    if (nameList) {
+        nameList.innerHTML = '';
+        babyNames.forEach(name => {
+            const li = document.createElement('li');
+            li.textContent = name;
+            nameList.appendChild(li);
+        });
+    }
+}
+
+// Add a new baby name to localStorage (Admin Functionality)
+function addName(name) {
+    let babyNames = JSON.parse(localStorage.getItem('babyNames')) || [];
+    if (babyNames.includes(name)) {
+        alert('This name already exists!'); // Prevent duplicate names
+        return;
+    }
+    babyNames.push(name);
+    localStorage.setItem('babyNames', JSON.stringify(babyNames));
+    loadNames(); // Reload names after adding a new one
+    alert(`Successfully added "${name}" to the list!`); // Confirmation message
+}
+
+// Load baby names for voting (Participant Functionality)
+function loadNamesForVoting() {
+    const babyNames = JSON.parse(localStorage.getItem('babyNames')) || [];
+    const voteList = document.getElementById('vote-list');
+    voteList.innerHTML = '';
+
+    babyNames.forEach(name => {
+        const li = document.createElement('li');
+        li.innerHTML = `${name} <button class="vote-btn" data-name="${name}">Vote</button>`;
+        voteList.appendChild(li);
+    });
+
+    // Attach event listeners to vote buttons
+    document.querySelectorAll('.vote-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            vote(this.getAttribute('data-name'));
+        });
+    });
+}
+
+// Handle participant login
+function login(name) {
+    const votingSection = document.getElementById('voting-section');
+    const participantName = name.trim();
+
+    if (participantName) {
+        sessionStorage.setItem('participantName', participantName); // Store name
+
+        if (!hasVoted(participantName)) {
+            votingSection.style.display = 'block';
+            document.getElementById('error-message').textContent = '';
+        } else {
+            document.getElementById('error-message').textContent = 'You have already voted!';
+        }
+    }
+}
+
+// Check if a participant has voted
+function hasVoted(participantName) {
+    const votes = JSON.parse(localStorage.getItem('votes')) || {};
+    return votes[participantName] ? true : false;
+}
+
+// Vote for a baby name (Participant Functionality)
+function vote(name) {
+    const participantName = sessionStorage.getItem('participantName');
+    if (participantName && !hasVoted(participantName)) {
+        const votes = JSON.parse(localStorage.getItem('votes')) || {};
+        votes[participantName] = name;
+        localStorage.setItem('votes', JSON.stringify(votes));
+
+        // Confirmation and visual feedback
+        alert(`Thank you, ${participantName}! You have voted for "${name}".`);
+        loadNamesForVoting();
+        displayResults();
+    } else {
+        alert('You are not allowed to vote again!');
+    }
+}
+
+// Display vote results (who voted for what and total votes)
+function displayResults() {
+    const votes = JSON.parse(localStorage.getItem('votes')) || {};
+    const voteResults = document.getElementById('vote-results');
+    voteResults.innerHTML = '';
+
+    // Count the total votes for each name
+    const voteCounts = {};
+
+    for (let participant in votes) {
+        const votedName = votes[participant];
+        voteCounts[votedName] = voteCounts[votedName] ? voteCounts[votedName] + 1 : 1;
+    }
+
+    // Display the voting results
+    const babyNames = JSON.parse(localStorage.getItem('babyNames')) || [];
+    babyNames.forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = `${name} - ${voteCounts[name] || 0} votes`;
+        voteResults.appendChild(li);
+    });
+
+    // Show who voted for which name
+    for (let participant in votes) {
+        const li = document.createElement('li');
+        li.textContent = `${participant} voted for ${votes[participant]}`;
+        li.classList.add('voted');
+        voteResults.appendChild(li);
+    }
+}
